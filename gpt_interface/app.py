@@ -1,8 +1,12 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from inference import get_answer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 app = Flask(__name__)
+model = AutoModelForCausalLM.from_pretrained("training/training-one")
+tokenizer = AutoTokenizer.from_pretrained("training/training-one")
 
 
 @app.route("/")
@@ -12,8 +16,7 @@ def hello():
 
 @app.route("/answer", methods=["POST"])
 def request_answer():
-    print("We made it to the server!")
     question = request.form["question"]
 
-    print(question)
-    return "The answer to {} is 42".format(question)
+    answer = get_answer(question, model, tokenizer)
+    return answer
