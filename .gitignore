@@ -137,7 +137,7 @@ venv.bak/
 
 # repo
 /data
-/training
+/model/training
 
 # mkdocs documentation
 /site
