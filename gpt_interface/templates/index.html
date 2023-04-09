@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Flask App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="title">RestorationGPT</h1>
+        <form id="chat-form">
+            <label for="question">Ask a question:</label>
+            <input type="text" id="question_box" name="question_box" required>
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Answer:</h2>
+        <p id="answer"></p>
+
+    </div>
+
+    <script>
+        $('#chat-form').on('submit', function (event) {
+            event.preventDefault();
+            const question = $('#question_box').val();
+
+            $.ajax({
+                url: '/answer',
+                method: 'POST',
+                data: {
+                    question: question
+                },
+                success: function (response) {
+                    console.log('success')
+                    console.log(response);
+                    $('#answer').text(response);
+                    $('#question_box').val('');
+                }
+
+            });
+        });
+    </script>
+</body>
+
+</html>
