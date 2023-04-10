@@ -2,47 +2,89 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ChatGPT Flask App</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
 </head>
 
 <body>
-    <div class="container">
-        <h1 id="title">RestorationGPT</h1>
-        <form id="chat-form">
-            <label for="question">Ask a question:</label>
-            <input type="text" id="question_box" name="question_box" required>
-            <button type="submit">Submit</button>
-        </form>
-        <h2>Answer:</h2>
-        <p id="answer"></p>
+    <div class="justify-spacebetween flex h-screen w-screen flex-col">
+        <div class="h-fit w-full border bg-white shadow-xl">
+            <h1 class="mx-auto my-6 w-fit font-sans text-4xl font-extrabold text-sky-500">RestorationGPT</h1>
+        </div>
+        <div id="chat_history" class="ml-32 mt-8 flex flex-col overflow-y-scroll">
+            <p id="summary" class="text-slate-500 text-center font-thin mr-32">RestorationGPT is designed to answer your
+                questions about the restoration and events in early church history. Please be advised that
+                RestorationGPT is an experimental Generative AI and its <span class="font-normal">responses will not
+                    always be accurate</span>. RestorationGPT takes a few seconds to contemplate each question, so don't
+                be alarmed if your answer does not appear right away.</p>
 
+        </div>
+        <div class="w-screen self-end justify-self-end mt-auto mb-16">
+            <form id="chat-form" class="flex justify-center text-slate-500">
+                <label for="question" class="my-auto mr-8">Ask a question:</label>
+                <input class="h-9 w-1/2 items-center border focus:outline-sky-500" type="text" id="question_box"
+                    name="question_box" required />
+                <button type="submit" class="ml-4 text-slate-500 hover:text-sky-500">
+                    <svg fill="currentColor" height="25" width="25" version="1.1" id="Layer_1"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 512 512" xml:space="preserve">
+                        <g>
+                            <g>
+                                <path d="M508.645,18.449c-2.929-2.704-7.133-3.51-10.826-2.085L6.715,204.446c-3.541,1.356-6.066,4.515-6.607,8.264
+			c-0.541,3.75,0.985,7.496,3.995,9.796l152.127,116.747c-0.004,0.116-0.575,0.224-0.575,0.342v83.592
+			c0,3.851,2.663,7.393,6.061,9.213c1.541,0.827,3.51,1.236,5.199,1.236c2.026,0,4.181-0.593,5.931-1.756l56.12-37.367
+			l130.369,99.669c1.848,1.413,4.099,2.149,6.365,2.149c1.087,0,2.186-0.169,3.248-0.516c3.27-1.066,5.811-3.672,6.786-6.974
+			L511.571,29.082C512.698,25.271,511.563,21.148,508.645,18.449z M170.506,321.508c-0.385,0.36-0.7,0.763-1.019,1.163
+			L31.659,217.272L456.525,54.557L170.506,321.508z M176.552,403.661v-48.454l33.852,25.887L176.552,403.661z M359.996,468.354
+			l-121.63-93.012c-1.263-1.77-2.975-3.029-4.883-3.733l-47.29-36.163L480.392,60.86L359.996,468.354z" />
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </form>
+        </div>
     </div>
-
-    <script>
-        $('#chat-form').on('submit', function (event) {
-            event.preventDefault();
-            const question = $('#question_box').val();
-
-            $.ajax({
-                url: '/answer',
-                method: 'POST',
-                data: {
-                    question: question
-                },
-                success: function (response) {
-                    console.log('success')
-                    console.log(response);
-                    $('#answer').text(response);
-                    $('#question_box').val('');
-                }
-
-            });
-        });
-    </script>
 </body>
+
+<script>
+    $('#chat-form').on('submit', function (event) {
+        event.preventDefault();
+        const question = $('#question_box').val();
+        let chat_history = $('#chat_history');
+
+        let new_question = $('<div class="flex my-4 ml-12 text-slate-500 font-normal">');
+        new_question.append('<h2 class="mr-8 font-bold">Question:</h2>');
+        new_question.append('<p class="border h-12 w-1/2 rounded-lg shadow-md items-center"><span class="my-auto">' + question + '</span></p>');
+
+        chat_history.append(new_question);
+
+        $('#question_box').val('');
+
+
+
+        $.ajax({
+            url: '/answer',
+            method: 'POST',
+            data: {
+                question: question
+            },
+            success: function (response) {
+                console.log('success')
+                console.log(response);
+
+                let new_answer = $('<div class="flex my-4 ml-12 text-slate-600 font-medium">');
+                new_answer.append('<h2 class="mr-8 font-bold">Answer:  </h2>');
+                new_answer.append('<p class="border h-12 w-1/2 rounded-lg shadow-md items-center"><span class="my-auto">' + response + '</span></p>');
+
+                chat_history.append(new_answer);
+            }
+
+        });
+    });
+</script>
 
 </html>
